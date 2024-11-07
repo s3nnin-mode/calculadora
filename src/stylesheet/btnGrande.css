@@ -1,0 +1,14 @@
+.btn-grande-ac {
+    grid-column: 1/3;
+    border: 1px solid red;
+}
+
+.btn-grande-igual {
+    grid-column: 4/5;
+    grid-row: 4/6;
+    border: 1px solid;
+}
+
+.btn-grande-cero {
+    grid-column: 1/3;
+}
