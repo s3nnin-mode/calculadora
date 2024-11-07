@@ -9,32 +9,44 @@ class Calculadora extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      input: ''
+      input: '0'
     }
     this.handleClick = this.handleClick.bind(this);
   }
 
   handleClick(valor) {
-    if (this.state.input === '000') {
-      this.setState({
-        input: '0'
-      })
-      return
-    }
+    // if (this.state.input === '000') {
+    //   this.setState({
+    //     input: '0'
+    //   })
+    //   return
+    // }
 
-    const arrInput = this.state.input.split('');
+    const numeros = ['1', '2', '3', '4', '5', '6', '7', '8', '9']
 
-    if (arrInput[0] === '0' && arrInput[1] !== '.') {
-      arrInput.splice(0, 1)
-      this.setState({
-        input: arrInput.join('') + valor
-      })
-      return
-    }
+    this.setState(prevState => {
+      const newInput = prevState.input + valor;
+      const arrInput = newInput.split('');
+      console.log('arrInput', arrInput[arrInput.length - 1])
+      if (arrInput[0] === '0' && arrInput[1] === '0') { //CASO PARA NO PERMITIR MAS DE UN '0' CONSECUTIVO (SOLO AL INICIO)
+        return { input: '0' }
+      } else if (arrInput[0] === '0' && numeros.some(n => n === arrInput[1])) { //CASO PARA NO PERMITIR '0' ANTES DE UN NUMERO (SOLO AL INICIO)
+        return { input: valor}
+      } else if (arrInput[arrInput.length - 1] === '.' && arrInput[arrInput.length - 2] === '.') {
+        return { input: prevState.input }
+      } else {
+        return { input: prevState.input + valor }
+      }
+    })    
 
-    this.setState(prevState => ({
-      input: prevState.input + valor
-    }))
+    // if (arrInput[0] === '0' && arrInput[1] !== '.') {
+    //   arrInput.splice(0, 1);
+      
+    //   this.setState({
+    //     input: arrInput.join('') + valor
+    //   })
+    //   return
+    // }
   }
 
   reset() {
