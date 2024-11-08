@@ -15,26 +15,45 @@ class Calculadora extends React.Component {
   }
 
   handleClick(valor) {
-    if (this.state.input === '000') {
-      this.setState({
-        input: '0'
-      })
-      return
-    }
+    const numeros = ['1', '2', '3', '4', '5', '6', '7', '8', '9'];
+    const operadores = ['/', '*', '+', '-'];
 
-    const arrInput = this.state.input.split('');
+    this.setState(prevState => {
+      const copiaInput = prevState.input;
+      let arrCopia = [];
+      if (typeof(copiaInput) === 'string') {
+        arrCopia = copiaInput.split('')
+      }
 
-    if (arrInput[0] === '0' && arrInput[1] !== '.') {
-      arrInput.splice(0, 1)
-      this.setState({
-        input: arrInput.join('') + valor
-      })
-      return
-    }
+      const newInput = prevState.input + valor;  
+      const arrInput = newInput.split('');
 
-    this.setState(prevState => ({
-      input: prevState.input + valor
-    }))
+      if (operadores.some(op => op === arrCopia[arrCopia.length - 1]) && operadores.some(op => op === valor)) { //CASO PARA NO ADMITIR OPERADORES CONSECUTIVOS A EXCEPECION DEL '-' DESPUES DEL '*'
+        if (arrCopia[arrCopia.length - 1] === '*' && valor === '-') {
+          return { input: newInput }
+        } else {
+          arrCopia.splice((arrCopia.length - 1), 1);
+          if (operadores.some(op => op === arrCopia[arrCopia.length - 1])) {
+            arrCopia.splice(arrCopia.length - 1)
+            return { input: arrCopia.join('') + valor }
+          }
+        }
+      }
+
+      if (arrInput[0] === '0' && arrInput[1] === '0') { //CASO PARA NO PERMITIR MAS DE UN '0' CONSECUTIVO (SOLO AL INICIO)
+        return { input: '0' }
+      } else if (arrInput[0] === '0' && numeros.some(n => n === arrInput[1])) { //CASO PARA NO PERMITIR '0' ANTES DE UN NUMERO (SOLO AL INICIO)
+        return { input: valor}
+      } else if (arrInput[arrInput.length - 1] === '.' && arrInput[arrInput.length - 2] === '.') {
+        return 
+      } else if(arrInput[arrInput.length - 1] === '.' 
+        && !isNaN(arrInput[arrInput.length - 2]) 
+        && arrInput[arrInput.length - 3] === '.') {  //CASO PARA NO ADMITIR DECIMALES EN UNA DECIMAL
+        return
+      } else {
+        return { input: prevState.input + valor }
+      }        
+    })  
   }
 
   reset() {
